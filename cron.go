@@ -47,27 +47,34 @@ type Schedule interface {
 type EntryID int
 
 // Entry consists of a schedule and the func to execute on that schedule.
+// 记录：包含了一个定时计划，以及这个计划要执行的函数
 type Entry struct {
 	// ID is the cron-assigned ID of this entry, which may be used to look up a
 	// snapshot or remove it.
+	// 记录id，方便后续用来对项目的定时、执行内容、状态控制
 	ID EntryID
 
 	// Schedule on which this job should be run.
+	// 计划接口
 	Schedule Schedule
 
 	// Next time the job will run, or the zero time if Cron has not been
 	// started or this entry's schedule is unsatisfiable
+	//下次运行时间
 	Next time.Time
 
 	// Prev is the last time this job was run, or the zero time if never.
+	//上一次运行时间
 	Prev time.Time
 
 	// WrappedJob is the thing to run when the Schedule is activated.
+	// 类似于装饰器一样的任务触发装置
 	WrappedJob Job
 
 	// Job is the thing that was submitted to cron.
 	// It is kept around so that user code that needs to get at the job later,
 	// e.g. via Entries() can do so.
+	// 真正要执行的任务
 	Job Job
 }
 
@@ -344,6 +351,7 @@ func (c *Cron) entrySnapshot() []Entry {
 	return entries
 }
 
+// 没错就是这么朴实无华的删除操作
 func (c *Cron) removeEntry(id EntryID) {
 	var entries []*Entry
 	for _, e := range c.entries {
